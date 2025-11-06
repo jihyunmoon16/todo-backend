@@ -2,6 +2,7 @@ package com.moon.todo.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moon.todo.domain.dtos.CreateTodoRequest;
 import com.moon.todo.domain.dtos.TodoDto;
+import com.moon.todo.domain.entities.Todo;
 import com.moon.todo.mapper.TodoMapper;
 import com.moon.todo.service.TodoService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,6 +33,15 @@ public class TodoController {
 				.map(todoMapper::toDto)
 				.toList();
 		return ResponseEntity.ok(todos);
+	}
+
+	@PostMapping()
+	public ResponseEntity<TodoDto> createTodo(@Valid @RequestBody CreateTodoRequest createTodoRequest) {
+		Todo todoToCreate = todoMapper.toEntity(createTodoRequest);
+
+		Todo savedTodo = todoService.createTodo(todoToCreate);
+
+		return new ResponseEntity<>(todoMapper.toDto(savedTodo), HttpStatus.CREATED);
 	}
 
 }
