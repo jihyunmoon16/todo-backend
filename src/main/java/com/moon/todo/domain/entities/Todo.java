@@ -62,15 +62,14 @@ public class Todo {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Todo todo = (Todo)o;
-		return completed == todo.completed && Objects.equals(id, todo.id) && Objects.equals(user,
-			todo.user) && Objects.equals(title, todo.title) && Objects.equals(description,
-			todo.description) && priority == todo.priority && Objects.equals(createdAt, todo.createdAt)
-			&& Objects.equals(updatedAt, todo.updatedAt);
+		return completed == todo.completed && Objects.equals(id, todo.id) && Objects.equals(title,
+			todo.title) && Objects.equals(description, todo.description) && priority == todo.priority
+			&& Objects.equals(createdAt, todo.createdAt) && Objects.equals(updatedAt, todo.updatedAt);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, user, title, description, priority, completed, createdAt, updatedAt);
+		return Objects.hash(id, title, description, priority, completed, createdAt, updatedAt);
 	}
 
 	@PrePersist
