@@ -33,11 +33,11 @@ public class AuthController {
 		return ResponseEntity.ok(loginResponse);
 
 	}
-	//
-	// @PostMapping("/signup")
-	// public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
-	// 	authService.signup(signupRequest);
-	// 	return ResponseEntity.ok().build();
-	// }
+
+	@PostMapping("/signup")
+	public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
+		authService.signup(signupRequest);
+		return ResponseEntity.ok().build();
+	}
 
 }

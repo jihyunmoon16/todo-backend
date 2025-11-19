@@ -29,18 +29,7 @@ public class SecurityConfig {
 
 	@Bean
 	public UserDetailsService userDetailsService(UserRepository userRepository) {
-		TodoUserDetailsService todoUserDetailsService = new TodoUserDetailsService(userRepository);
-
-		String email = "abc@naver.com";
-		userRepository.findByEmail(email).orElseGet(() -> {
-			User newUser = com.moon.todo.domain.entities.User.builder()
-				.nickname("Default User")
-				.email(email)
-				.password(passwordEncoder().encode("password"))
-				.build();
-			return userRepository.save(newUser);
-		});
-		return todoUserDetailsService;
+		return new TodoUserDetailsService(userRepository);
 	}
 
 	@Bean
