@@ -6,7 +6,9 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.moon.todo.domain.dtos.SignupRequest;
 import com.moon.todo.domain.entities.User;
+import com.moon.todo.exception.CustomBusinessException;
+import com.moon.todo.exception.ErrorCode;
 import com.moon.todo.mapper.UserMapper;
 import com.moon.todo.repository.UserRepository;
 
@@ -37,10 +41,16 @@ public class AuthService {
 	private final Long jwtExpiryMs = 86400000L;
 
 	public UserDetails authenticate(String email, String password) {
-		authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(email, password)
-		);
-		return userDetailsService.loadUserByUsername(email);
+		try {
+			authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(email, password)
+			);
+			return userDetailsService.loadUserByUsername(email);
+		} catch (BadCredentialsException ex) {
+			throw new CustomBusinessException(ErrorCode.INVALID_LOGIN_CREDENTIALS);
+		} catch (AuthenticationException ex) {
+			throw new CustomBusinessException(ErrorCode.LOGIN_FAILED);
+		}
 	}
 
 	public String generateToken(UserDetails userDetails) {
@@ -77,7 +87,7 @@ public class AuthService {
 	public void signup(SignupRequest signupRequest) {
 		userRepository.findByEmail(signupRequest.getEmail())
 			.ifPresent(user -> {
-				throw new IllegalArgumentException("Email already in use");
+				throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
 			});
 
 		User newUser = userMapper.toEntity(signupRequest, passwordEncoder);
