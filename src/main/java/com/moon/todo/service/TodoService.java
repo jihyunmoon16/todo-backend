@@ -57,4 +57,21 @@ public class TodoService {
 		todoMapper.updateFromRequest(updateTodoRequest, todo);
 		return todo;
 	}
+
+	public Todo getTodo(Long todoId, TodoUserDetails user) {
+		Todo todo = todoRepository.findById(todoId)
+			.orElseThrow(() -> new CustomBusinessException(ErrorCode.TODO_NOT_FOUND));
+
+		// 권한 체크
+		if (!todo.getUser().getId().equals(user.getId())) {
+			throw new CustomBusinessException(ErrorCode.UNAUTHORIZED_ACCESS);
+		}
+
+		return todo;
+	}
+
+	public Todo getTodo(Long id) {
+		return todoRepository.findById(id)
+			.orElseThrow(() -> new CustomBusinessException(ErrorCode.TODO_NOT_FOUND));
+	}
 }

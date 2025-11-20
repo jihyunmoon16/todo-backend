@@ -69,4 +69,13 @@ public class TodoController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<TodoDto> getTodoById(@PathVariable Long todoId,
+		@AuthenticationPrincipal TodoUserDetails user) {
+
+		Todo todo = todoService.getTodo(todoId, user);
+
+		return ResponseEntity.ok(todoMapper.toDto(todo));
+	}
+
 }
