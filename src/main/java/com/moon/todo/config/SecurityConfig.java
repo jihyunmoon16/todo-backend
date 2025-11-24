@@ -12,8 +12,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.moon.todo.domain.entities.User;
 import com.moon.todo.repository.UserRepository;
 import com.moon.todo.security.JwtAuthenticationFilter;
 import com.moon.todo.security.TodoUserDetailsService;
@@ -38,7 +40,9 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v1/todos/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/api/v1/todos/**").permitAll()
@@ -48,6 +52,19 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+
+		config.addAllowedOrigin("http://localhost:5173");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		config.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
