@@ -34,13 +34,9 @@ public class TodoController {
 	private final TodoService todoService;
 	private final TodoMapper todoMapper;
 
-	@GetMapping()
+	@GetMapping
 	public ResponseEntity<List<TodoDto>> getTodos(@AuthenticationPrincipal TodoUserDetails user) {
-		Long userId = user.getId();
-
-		List<TodoDto> todos = todoService.getTodos(userId).stream()
-				.map(todoMapper::toDto)
-				.toList();
+		List<TodoDto> todos = todoService.getTodos(user.getId());
 		return ResponseEntity.ok(todos);
 	}
 
@@ -70,7 +66,7 @@ public class TodoController {
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<TodoDto> getTodoById(@PathVariable Long todoId,
+	public ResponseEntity<TodoDto> getTodoById(@PathVariable("id") Long todoId,
 		@AuthenticationPrincipal TodoUserDetails user) {
 
 		Todo todo = todoService.getTodo(todoId, user);

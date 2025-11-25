@@ -16,5 +16,6 @@ public class TodoDto {
 	private String title;
 	private String description;
 	private Priority priority;
+	private int pomodoroTime;
 	private boolean completed;
 }

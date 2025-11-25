@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moon.todo.domain.dtos.TodoDto;
 import com.moon.todo.domain.dtos.UpdateTodoRequest;
 import com.moon.todo.domain.entities.Todo;
 import com.moon.todo.domain.entities.User;
 import com.moon.todo.exception.CustomBusinessException;
 import com.moon.todo.exception.ErrorCode;
 import com.moon.todo.mapper.TodoMapper;
+import com.moon.todo.repository.PomodoroRepository;
 import com.moon.todo.repository.TodoRepository;
 import com.moon.todo.repository.UserRepository;
 import com.moon.todo.security.TodoUserDetails;
@@ -22,10 +24,17 @@ import lombok.RequiredArgsConstructor;
 public class TodoService {
 	private final TodoRepository todoRepository;
 	private final UserRepository userRepository;
+	private final PomodoroRepository pomodoroRepository;
 	private final TodoMapper todoMapper;
 
-	public List<Todo> getTodos(Long userId) {
-		return todoRepository.findByUserId(userId);
+	public List<TodoDto> getTodos(Long userId) {
+		return todoRepository.findByUserId(userId).stream()
+			.map(todo -> {
+				TodoDto dto = todoMapper.toDto(todo);
+				int totalPomodoro = pomodoroRepository.getTotalDurationByTodoId(todo.getId());
+				dto.setPomodoroTime(totalPomodoro);
+				return dto;
+			}).toList();
 	}
 
 	@Transactional
