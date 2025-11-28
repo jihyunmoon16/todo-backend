@@ -45,6 +45,12 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
 
+    implementation "org.postgresql:postgresql"
+
+    // Azure Key Vault
+    implementation platform("com.azure.spring:spring-cloud-azure-dependencies:6.0.0")
+    implementation "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets"
+
 }
 
 tasks.named('test') {

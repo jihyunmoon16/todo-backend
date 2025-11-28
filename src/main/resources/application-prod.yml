@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  cloud:
+    azure:
+      keyvault:
+        enabled: true
+        secret:
+          property-source-enabled: true
+        endpoint: https://<your-keyvault-name>.vault.azure.net/
+
+jwt:
+  secret: ${JWT_SECRET}

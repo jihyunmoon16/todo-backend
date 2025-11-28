@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: todo
+  profiles:
+    active: local
+
+jpa:
+  properties:
+    hibernate:
+      format_sql: true
+
+jwt:
+  expiry: 3600000
