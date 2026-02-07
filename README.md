@@ -1,83 +1,112 @@
 # Todo Backend
 
-맑은 정신과 생산적인 계획으로 하루를 시작하세요. 이 Todo 백엔드 애플리케이션은 작업 및 뽀모도로 세션 관리를 위한 강력하고 안전한 API를 제공하여, 체계적이고 집중력 있는 하루를 보낼 수 있도록 돕습니다.
+A production-ready REST API for a task management application with Pomodoro timer integration. Built with Spring Boot and deployed on a Linux VM.
 
-## 🚀 소개
+**Live Demo:** [phasetheday.me](https://phasetheday.me)
 
-이 프로젝트는 현대적인 Todo 리스트 애플리케이션을 지원하기 위해 설계된 Spring Boot 기반의 백엔드 애플리케이션입니다. JWT를 이용한 안전한 사용자 인증, 포괄적인 할 일 관리(CRUD), 그리고 생산성을 높이기 위한 뽀모도로 타이머 API를 제공합니다. 업계 표준 기술과 모범 사례를 활용하여 확장성과 유지보수성을 고려해 구축되었습니다.
+## Tech Stack
 
-## 🛠 기술 스택
+| Category | Technology |
+|----------|------------|
+| Language | Java 21 |
+| Framework | Spring Boot 3.5.4 |
+| Security | Spring Security, JWT |
+| Database | PostgreSQL |
+| ORM | Spring Data JPA (Hibernate) |
+| Build | Gradle |
+| Deployment | Linux VM, Systemd, Nginx |
 
--   **Java 21**: 최신 언어 기능과 성능을 위한 최신 LTS 버전.
--   **Spring Boot 3.5.4**: 빠르고 언제든 배포 가능한 애플리케이션 개발을 지원.
--   **Spring Security**: 인증 및 권한 부여를 위한 강력한 보안 프레임워크.
--   **Spring Data JPA**: Hibernate를 사용하여 데이터베이스 상호작용을 단순화.
--   **PostgreSQL**: 신뢰할 수 있고 강력한 관계형 데이터베이스 시스템.
--   **JWT (JSON Web Token)**: 무상태(Stateless) 인증 방식.
--   **Gradle**: 강력한 빌드 자동화 도구.
+## Architecture
 
-## ✨ 주요 기능
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   React     │────▶│ Spring Boot │────▶│ PostgreSQL  │
+│  Frontend   │     │   REST API  │     │  Database   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                           │
+                    ┌──────┴──────┐
+                    │ JWT Auth    │
+                    │ Filter      │
+                    └─────────────┘
+```
 
-### 🔐 인증 (Authentication)
-안전한 사용자 가입 및 로그인 엔드포인트를 제공합니다.
--   **회원가입**: 새로운 계정을 생성합니다.
--   **로그인**: 인증을 거쳐 보호된 리소스에 접근할 수 있는 JWT를 발급받습니다.
+## Key Features
 
-### 📝 할 일 관리 (Todo Management)
-일일 작업을 관리하기 위한 완전한 CRUD 작업을 지원합니다.
--   **할 일 생성**: 우선순위와 마감일이 포함된 새로운 작업을 추가합니다.
--   **할 일 조회**: 내 작업 목록을 조회합니다.
--   **할 일 수정**: 작업 내용을 수정하거나 완료 상태로 변경합니다.
--   **할 일 삭제**: 더 이상 필요하지 않은 작업을 삭제합니다.
+### Secure Authentication
+- Stateless JWT-based authentication
+- Password encryption with BCrypt
+- Token validation filter chain
 
-### 🍅 뽀모도로 타이머 (Pomodoro Timer)
-집중력을 높이기 위해 통합된 뽀모도로 API를 제공합니다.
--   **뽀모도로 생성**: 특정 작업에 대해 완료된 뽀모도로 세션을 기록합니다.
+### RESTful API Design
+- Clean resource-based URL structure
+- Proper HTTP methods and status codes
+- Request/Response DTOs for data transfer
 
-## 🏁 시작하기
+### Pomodoro Integration
+- Track focus sessions per task
+- Aggregate duration statistics
+- Productivity metrics support
 
-### 사전 요구 사항
--   Java 21 SDK 설치
--   PostgreSQL 데이터베이스 실행 중
--   Gradle (선택 사항, 래퍼 제공됨)
+## API Endpoints
 
-### 설치 방법
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/signup` | Register new user |
+| POST | `/api/v1/auth/login` | Authenticate and get JWT |
+| GET | `/api/v1/todos` | Get all todos |
+| POST | `/api/v1/todos` | Create todo |
+| GET | `/api/v1/todos/{id}` | Get specific todo |
+| PATCH | `/api/v1/todos/{id}` | Update todo |
+| DELETE | `/api/v1/todos/{id}` | Delete todo |
+| POST | `/api/v1/todos/{id}/pomodoros` | Log pomodoro session |
 
-1.  **저장소 클론**
-    ```bash
-    git clone <repository_url>
-    cd todo-backend
-    ```
+## Technical Highlights
 
-2.  **환경 변수 설정**
-    `src/main/resources/application.yml` 파일을 업데이트하거나 데이터베이스 연결 및 JWT 비밀키를 위한 환경 변수를 설정하세요.
-    
-    *참고: 프로덕션 환경에서는 민감한 정보에 대해 환경 변수를 사용하는 것을 권장합니다.*
+### Security Implementation
+- Custom `JwtAuthenticationFilter` for token validation
+- Configured CORS for frontend integration
+- Stateless session management
 
-3.  **빌드 및 실행**
-    ```bash
-    ./gradlew bootRun
-    ```
+### Database Design
+- JPA entity relationships (User → Todo → Pomodoro)
+- Optimized queries with Spring Data JPA
+- Environment-specific configurations (local/prod)
 
-## 📡 API 엔드포인트
+### Deployment Pipeline
+- Systemd service management
+- Environment variables for sensitive data
+- Nginx reverse proxy configuration
 
-### 인증 (Authentication)
--   `POST /api/v1/users/signup` - 새 사용자 등록
--   `POST /api/v1/users/login` - 로그인 및 JWT 발급
+## Local Development
 
-### 할 일 (Todos)
--   `GET /api/v1/todos` - 모든 할 일 조회
--   `POST /api/v1/todos` - 새 할 일 생성
--   `GET /api/v1/todos/{id}` - 특정 할 일 조회
--   `PATCH /api/v1/todos/{id}` - 할 일 수정
--   `DELETE /api/v1/todos/{id}` - 할 일 삭제
+```bash
+# Prerequisites: Java 21, PostgreSQL
 
-### 뽀모도로 (Pomodoros)
--   `POST /api/v1/todos/{id}/pomodoros` - 할 일에 대한 뽀모도로 세션 생성
+# Set environment variables
+export DB_PASSWORD=your_password
+export JWT_SECRET=your_secret
 
-## 💻 프론트엔드 연동 (Frontend Integration)
-이 백엔드 애플리케이션은 기본적으로 `http://localhost:5173`에서 실행되는 프론트엔드 애플리케이션과의 통신을 허용하도록 설정되어 있습니다 (CORS).
-React, Vue 등 프론트엔드 개발 서버를 해당 포트에서 실행하면 별도의 설정 없이 API를 호출할 수 있습니다.
+# Run the application
+./gradlew bootRun
+```
 
-## 🤝 기여하기
-기여는 언제나 환영합니다! 저장소를 포크(fork)하고 개선 사항이나 버그 수정에 대한 풀 리퀘스트(pull request)를 제출해 주세요.
+## Project Structure
+
+```
+src/main/java/com/moon/todo/
+├── config/          # Security, CORS configuration
+├── controller/      # REST API endpoints
+├── dto/             # Request/Response objects
+├── entity/          # JPA entities
+├── repository/      # Data access layer
+├── security/        # JWT filter, auth components
+└── service/         # Business logic
+```
+
+## What I Learned
+
+- Implementing JWT authentication from scratch with Spring Security
+- Managing environment-specific configurations for local and production
+- Deploying Spring Boot applications on Linux with systemd
+- Database migration from MariaDB to PostgreSQL
+- CORS configuration for frontend-backend communication
