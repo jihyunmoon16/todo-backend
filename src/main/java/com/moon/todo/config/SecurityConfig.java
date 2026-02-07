@@ -35,19 +35,20 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+			throws Exception {
 		http
-			.csrf(csrf -> csrf.disable())
-			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/api/v1/todos/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/api/v1/todos/**").permitAll()
-				.anyRequest().authenticated())
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				.csrf(csrf -> csrf.disable())
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/v1/todos/**").permitAll()
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/todos/**").permitAll()
+						.anyRequest().authenticated())
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -56,9 +57,14 @@ public class SecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 
+		config.addAllowedOrigin("https://phasetheday.me");
 		config.addAllowedOrigin("http://localhost:5173");
 		config.addAllowedHeader("*");
-		config.addAllowedMethod("*");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("DELETE");
+		config.addAllowedMethod("OPTIONS");
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
